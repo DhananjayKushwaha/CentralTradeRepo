@@ -1,0 +1,8 @@
+.vs/*
+bin/
+obj/
+logs/
+.idea/
+packages/**
+*.user
+TestResults/*
