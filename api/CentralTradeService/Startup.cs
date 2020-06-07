@@ -16,7 +16,7 @@ namespace CentralTrade.API
     public class Startup
     {
         private const string SwaggerEndpoint = "/swagger/v1/swagger.json";
-        private const string FileToBeLogger = @"C:\log.txt";//read from externalized configuration
+        private const string FileToBeLogged = @"C:\log.txt";//read from externalized configuration
 
         public IConfiguration Configuration { get; }
 
@@ -33,10 +33,12 @@ namespace CentralTrade.API
             builder.RegisterType<ConsoleLogger>()
                 .As<ILogger>()
                 .WithParameter("logSeverities", LogSeverityExtensions.All())//set up with all severity
-                .WithParameter("nextLogger", new FileLogger(new List<LogSeverity>() { LogSeverity.Error }, FileToBeLogger))//setup file logger only for errors
+                .WithParameter("nextLogger", new FileLogger(new List<LogSeverity>() { LogSeverity.Error }, FileToBeLogged))//setup file logger only for errors
                 .SingleInstance();
-            builder.RegisterType<TradeRepository>().As<ITradeRepository>();
+            builder.RegisterType<TradeRepository>().As<ITradeRepository>();            
             builder.RegisterType<TradeTxService>().As<ITradeTxService>();
+            builder.RegisterType<TradeService>().As<ITradeService>();
+            builder.RegisterType<TradeViewRepository>().As<ITradeViewRepository>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.

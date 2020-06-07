@@ -9,6 +9,7 @@ using CentralTrade.Domain.Services;
 using Newtonsoft.Json;
 using System.Linq;
 using CentralTrade.Logger;
+using System.Collections.Generic;
 
 namespace CentralTrade.API.Controllers.v1
 {
@@ -26,7 +27,7 @@ namespace CentralTrade.API.Controllers.v1
         [HttpPost]
         [ProducesResponseType(typeof(TradeResponse), 200)]
         [Route("GetTopTrades")]
-        public async Task<IActionResult> GetTrades(int topN)
+        public async Task<IActionResult> GetTrades(int topN, bool includeMyFavStocks)
         {
             var tradeResponse = new TradeResponse() { ValidationResult = new ValidationResult { Success = true } };
 
@@ -37,9 +38,22 @@ namespace CentralTrade.API.Controllers.v1
                     return HandleBadRequest(new BaseRequest(), tradeResponse);
                 }
 
-                var stockViews = await _tradeService.Get(topN);
-                
-                tradeResponse.Stocks = stockViews;
+                //run both service call parallely
+                var stockViews = _tradeService.Get(topN);
+                Task<List<StockView>> myStockViews = null;
+
+                if (includeMyFavStocks)
+                {
+                    myStockViews = _tradeService.GetMyWatchStocks();
+                }
+
+                //and then wait for both to get result
+                tradeResponse.Stocks = await stockViews;
+
+                if (myStockViews != null)
+                {
+                    tradeResponse.MyWatchStocks = await myStockViews;
+                }
 
                 return Ok(tradeResponse);
             }

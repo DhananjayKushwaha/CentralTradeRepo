@@ -9,5 +9,6 @@ namespace CentralTrade.API.Models
     public class TradeResponse : BaseResponse
     {
         public List<StockView> Stocks { get; set; }
+        public List<StockView> MyWatchStocks { get; set; }
     }
 }

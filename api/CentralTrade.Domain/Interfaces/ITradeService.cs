@@ -7,5 +7,6 @@ namespace CentralTrade.Domain.Services
     public interface ITradeService
     {
         Task<List<StockView>> Get(int topN);
+        Task<List<StockView>> GetMyWatchStocks();
     }
 }
