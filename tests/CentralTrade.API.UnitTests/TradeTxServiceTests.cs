@@ -24,7 +24,7 @@ namespace Dell.Solution.PGI.UnitTests
         }
 
         [Fact]
-        public async Task Buy_ValidRequest_RepoInvoked()
+        public async Task Buy_ValidStockUnits_SavedInRepo()
         {
             //arrange
             var tradeTxService = new TradeTxService(_loggerMock.Object, _tradeRepositoryMock.Object, _messageHandlerMock.Object);
@@ -44,9 +44,33 @@ namespace Dell.Solution.PGI.UnitTests
             _tradeRepositoryMock.Verify(x => x.BuyStock(userId, stockId, noOfUnits), Times.Once);
             _messageHandlerMock.Verify(x => x.Send(It.Is<Order>(y => y.StockId == stockId), "Order - " + stockId), Times.Once);
         }
+        
+        [Fact]
+        public async Task Buy_ValidStockUnits_OrderPlaced()
+        {
+            //arrange
+            var tradeTxService = new TradeTxService(_loggerMock.Object, _tradeRepositoryMock.Object, _messageHandlerMock.Object);
+            var userId = Guid.NewGuid();
+            var stockId = Guid.NewGuid();
+            var noOfUnits = 10;
+            var userStockId = Guid.NewGuid();
+
+            _tradeRepositoryMock.Setup(x => x.BuyStock(userId, stockId, noOfUnits)).ReturnsAsync(userStockId);
+            _messageHandlerMock.Setup(x => x.Send(It.IsAny<IMessage>(), It.IsAny<string>()));
+
+            //act
+            var result = await tradeTxService.Buy(userId, stockId, noOfUnits);
+
+            //assert
+            Assert.True(result);
+            _tradeRepositoryMock.Verify(x => x.BuyStock(userId, stockId, noOfUnits), Times.Once);
+            _messageHandlerMock.Verify(x => x.Send(It.Is<Order>(y => y.StockId == stockId && 
+            y.OrderStatus == CentralTrade.Models.Enums.OrderStatus.Placed &&
+            y.TransactionType == CentralTrade.Models.Enums.TransactionType.Buy), "Order - " + stockId), Times.Once);
+        }
 
         [Fact]
-        public async Task Buy_InvalidInput_ErrorLogged()
+        public async Task Buy_InvalidStockId_ErrorLogged()
         {
             //arrange
             var tradeTxService = new TradeTxService(_loggerMock.Object, _tradeRepositoryMock.Object, _messageHandlerMock.Object);
@@ -70,7 +94,7 @@ namespace Dell.Solution.PGI.UnitTests
         }
 
         [Fact]
-        public async Task Sell_ValidRequest_RepoInvoked()
+        public async Task Sell_ValidStockUnits_SavedInRepo()
         {
             //arrange
             var tradeTxService = new TradeTxService(_loggerMock.Object, _tradeRepositoryMock.Object, _messageHandlerMock.Object);
@@ -92,7 +116,31 @@ namespace Dell.Solution.PGI.UnitTests
         }
 
         [Fact]
-        public async Task UpdateStockPrice_ValidRequest_RepoInvoked()
+        public async Task Sell_ValidStockUnits_OrderPlaced()
+        {
+            //arrange
+            var tradeTxService = new TradeTxService(_loggerMock.Object, _tradeRepositoryMock.Object, _messageHandlerMock.Object);
+            var userId = Guid.NewGuid();
+            var stockId = Guid.NewGuid();
+            var noOfUnits = 10;
+            var userStockId = Guid.NewGuid();
+
+            _tradeRepositoryMock.Setup(x => x.SellStock(userId, stockId, noOfUnits)).ReturnsAsync(userStockId);
+            _messageHandlerMock.Setup(x => x.Send(It.IsAny<IMessage>(), It.IsAny<string>()));
+
+            //act
+            var result = await tradeTxService.Buy(userId, stockId, noOfUnits);
+
+            //assert
+            Assert.True(result);
+            _tradeRepositoryMock.Verify(x => x.SellStock(userId, stockId, noOfUnits), Times.Once);
+            _messageHandlerMock.Verify(x => x.Send(It.Is<Order>(y => y.StockId == stockId &&
+            y.OrderStatus == CentralTrade.Models.Enums.OrderStatus.Placed &&
+            y.TransactionType == CentralTrade.Models.Enums.TransactionType.Sell), "Order - " + stockId), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateStockPrice_ValidNewStockPrice_StockPriceUpdated()
         {
             //arrange
             var tradeTxService = new TradeTxService(_loggerMock.Object, _tradeRepositoryMock.Object, _messageHandlerMock.Object);

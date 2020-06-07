@@ -40,7 +40,7 @@ namespace CentralTrade.Domain.Services
                     OrderDate = DateTime.Now,
                     UserStockId = userStockId,
                     OrderStatus = CentralTrade.Models.Enums.OrderStatus.Placed,
-                    TransactionType = CentralTrade.Models.Enums.TransactionType.Sell,
+                    TransactionType = CentralTrade.Models.Enums.TransactionType.Buy,
                 };
 
                 _messageHandler.Send(order, "Order - " + order.StockId);
