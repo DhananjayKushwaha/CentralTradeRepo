@@ -4,11 +4,16 @@ using System.Text;
 
 namespace CentralTrade.Logger
 {
-    public class ConsoleLogger : ILogger
+    public class ConsoleLogger : Logger
     {
-        public void Log(LogSeverity logSeverity, string Message)
+        public ConsoleLogger(List<LogSeverity> logSeverities, ILogger nextLogger = null) : base(logSeverities, nextLogger)
         {
-            throw new NotImplementedException();
+
+        }
+
+        protected override void LogMessage(LogSeverity logSeverity, string message) 
+        {
+            Console.WriteLine(string.Format("[{0}] - {1}", logSeverity, message));
         }
     }
 }

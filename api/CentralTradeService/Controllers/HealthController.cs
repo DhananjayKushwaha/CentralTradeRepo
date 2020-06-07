@@ -3,31 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using CentralTrade.Logger;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace CentralTrade.API.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class HealthController : ControllerBase
+    public class HealthController : TradeBaseController
     {
-        private readonly ILogger _logger;
-
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="logger"></param>
-        public HealthController(ILogger<HealthController> logger)
+        public HealthController(ILogger logger) : base(logger)
         {
-            _logger = logger;
-        }
 
+
+        }
         [HttpGet("status")]
         public IActionResult Status()
         {
-            _logger.LogInformation("HEALTH CHECK: /ping");
+            _logger.Log( LogSeverity.Info, "HEALTH CHECK: /ping");
             return StatusCode((int)HttpStatusCode.OK, new
             {
                 Service = "Trade Service",

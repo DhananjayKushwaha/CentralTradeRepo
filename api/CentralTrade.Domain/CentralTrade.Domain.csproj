@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CentralTrade.Logger\CentralTrade.Logger.csproj" />
     <ProjectReference Include="..\CentralTrade.Repositories\CentralTrade.Repositories.csproj" />
   </ItemGroup>
 

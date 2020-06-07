@@ -7,23 +7,18 @@ using CentralTrade.Models.Enums;
 using CentralTrade.Models;
 using CentralTrade.Domain.Services;
 using Newtonsoft.Json;
-using Dell.Solution.Cloud.Core.Helpers;
-using Microsoft.Extensions.Logging;
 using System.Linq;
-
+using CentralTrade.Logger;
 namespace CentralTrade.API.Controllers.v1
 {
-    [ApiVersion("1.0")]
     [Produces("application/json")]
-    [Route("api/v{api-version:apiVersion}/TradeService")]
-    public class TradeController : Controller
+    [Route("api/TradeService")]
+    public class TradeController : TradeBaseController
     {
-        private readonly ILogger _logger;
         private readonly ITradeTxService _tradeTxService;
 
-        public TradeController(ILogger<TradeController> logger, ITradeTxService tradeTxService)
+        public TradeController(ILogger logger, ITradeTxService tradeTxService) : base(logger)
         {
-            _logger = logger;
             _tradeTxService = tradeTxService;
         }
 
@@ -88,56 +83,5 @@ namespace CentralTrade.API.Controllers.v1
                 return HandleError(HttpStatusCode.InternalServerError, buyStockRequest, sellStockResponse, ex);
             }
         }
-
-        private ObjectResult HandleBadRequest(BaseRequest request, BaseResponse response)
-        {
-            response.ValidationResult.Success = false;
-            response.ValidationResult.Message = "Input parameters are invalid.";
-            response.ValidationResult.ErrorCode = ErrorCode.InvalidInput;
-
-            LogInfo(request, response);
-
-            return StatusCode((int)HttpStatusCode.BadRequest, response);
-        }
-
-        private void LogInfo(BaseRequest request, BaseResponse response)
-        {
-            string reqResMsg = "";
-
-            if (request != null)
-            {
-                reqResMsg += "Request - " + JsonConvert.SerializeObject(request);
-            }
-
-            if (response != null)
-            {
-                if (reqResMsg != "")
-                {
-                    reqResMsg += "\r\n";
-                }
-
-                reqResMsg += "Response - " + JsonConvert.SerializeObject(response);
-            }
-
-            _logger.LogInformation(reqResMsg);
-        }
-
-        private ObjectResult HandleError(HttpStatusCode statusCode, BaseRequest request, BaseResponse response, Exception ex = null)
-        {
-            response.ValidationResult.Success = false;
-            response.ValidationResult.ErrorCode = ErrorCode.Unspecified;
-
-            LogInfo(request, response);
-
-            if (ex != null)
-            {
-                var errMessage = ex.InnerException != null ? ex.Message + " Details:" + ex.InnerException.Message : ex.Message;
-                errMessage += " StackTrace:" + ex.StackTrace;
-                response.ValidationResult.Message = errMessage;
-                _logger.LogError(ex, errMessage);
-            }
-
-            return StatusCode((int)statusCode, response);
-        }
-    }    
+    }
 }

@@ -1,42 +1,58 @@
-﻿using Dell.Solution.Cloud.Core.Helpers;
-using CentralTrade.Models;
+﻿using CentralTrade.Models;
 using CentralTrade.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
+using CentralTrade.Logger;
+using CentralTrade.Domain.Interfaces;
 
 namespace CentralTrade.Domain.Services
 {
     public class TradeTxService : ITradeTxService
     {
         private readonly ITradeRepository _tradeRepository;
+        private readonly ILogger _logger;
+        private readonly IMessageHandler<IMessage> _messageHandler;
 
-        public TradeTxService(ITradeRepository tradeRepository)
+        public TradeTxService(ILogger logger, 
+            ITradeRepository tradeRepository, 
+            IMessageHandler<IMessage> messageHandler)
         {
+            _logger = logger;
             _tradeRepository = tradeRepository;
+            _messageHandler = messageHandler;
         }
 
         public async Task<bool> Buy(Guid userId, Guid stockId, int noOfUnits)
         {
-            //validate stock & available units from repo
-            
-            //buy stock
-            var userStockId = await _tradeRepository.BuyStock(userId, stockId, noOfUnits);
-
-            Order order = new Order()
+            try
             {
-                StockId = stockId,
-                OrderDate = DateTime.Now,
-                UserStockId = userStockId,
-                OrderStatus = CentralTrade.Models.Enums.OrderStatus.Placed,
-                TransactionType = CentralTrade.Models.Enums.TransactionType.Sell,
-            };
+                //validate stock & available units from repo
 
-            RabbitMqHelper.SendOrder(order, "Order - " + order.StockId);
+                //buy stock
+                var userStockId = await _tradeRepository.BuyStock(userId, stockId, noOfUnits);
 
-            return true;
+                Order order = new Order()
+                {
+                    StockId = stockId,
+                    OrderDate = DateTime.Now,
+                    UserStockId = userStockId,
+                    OrderStatus = CentralTrade.Models.Enums.OrderStatus.Placed,
+                    TransactionType = CentralTrade.Models.Enums.TransactionType.Sell,
+                };
+
+                _messageHandler.Send(order, "Order - " + order.StockId);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                _logger.Log(LogSeverity.Error, ex.Message);
+            }
+
+            return false;
         }
 
         public async Task<bool> Sell(Guid userId, Guid stockId, int noOfUnits)
@@ -55,7 +71,7 @@ namespace CentralTrade.Domain.Services
                 OrderStatus = CentralTrade.Models.Enums.OrderStatus.Placed
             };
 
-            RabbitMqHelper.SendOrder(order, "Order - " + order.StockId);
+            _messageHandler.Send(order, "Order - " + order.StockId);
 
             return true;
         }
@@ -73,7 +89,7 @@ namespace CentralTrade.Domain.Services
                 UnitPrice = unitPrice
             };
 
-            RabbitMqHelper.SendStockUpdate(stockUpdate, "Stock - " + stockId);
+            _messageHandler.Send(stockUpdate, "Stock - " + stockId);
 
             return true;
         }

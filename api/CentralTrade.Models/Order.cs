@@ -14,5 +14,17 @@ namespace CentralTrade.Models
         public OrderStatus OrderStatus { get; set; }
         public DateTime OrderDate { get; set; }
         public TransactionType TransactionType { get; set; }
+
+        public string Key {
+            get { return StockId.ToString(); }
+        }
+
+        public string Exchange {
+            get { return "trade_orders"; }
+        }
+
+        public string Type {
+            get { return "direct"; }
+        }
     }
 }

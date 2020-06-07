@@ -1,5 +1,4 @@
-﻿using Dell.Solution.Cloud.Core.Helpers;
-using CentralTrade.Models;
+﻿using CentralTrade.Models;
 using CentralTrade.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -21,10 +20,10 @@ namespace CentralTrade.Domain.Services
             _tradeRepository = tradeRepository;
         }
 
-        public async Task<bool> UpdateOrder(Order order)
+        public async Task<Guid> UpdateOrder(Order order)
         {
             //update UserStock & Stock data in repo
-            return await Task.FromResult(true);
+            return await _tradeRepository.UpdateStockPrice(order.StockId, 123.00);
         }
     }
 }

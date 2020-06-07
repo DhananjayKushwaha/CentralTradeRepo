@@ -9,18 +9,18 @@ namespace CentralTrade.Logger
     /// <summary>
     /// Thread safe simple file logger implementation
     /// </summary>
-    public class FileLogger : ILogger
+    public class FileLogger : Logger
     {
         private TextWriter _textWriter;
-        private static Mutex _mutex = new Mutex();
-        private string _filePath;
+        private static readonly Mutex _mutex = new Mutex();
+        private readonly string _filePath;
 
-        public FileLogger(string filePath)
+        public FileLogger(List<LogSeverity> logSeverities, string filePath, ILogger nextLogger = null) : base(logSeverities, nextLogger)
         {
             _filePath = filePath;
         }
 
-        public void Log(LogSeverity logSeverity, string message)
+        protected override void LogMessage(LogSeverity logSeverity, string message)
         {
             try
             {

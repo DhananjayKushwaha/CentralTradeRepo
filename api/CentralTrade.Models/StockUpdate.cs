@@ -9,5 +9,19 @@ namespace CentralTrade.Models
     {        
         public Guid Id { get; set; }
         public double UnitPrice { get; set; }
+        public string Key
+        {
+            get { return Id.ToString(); }
+        }
+
+        public string Exchange
+        {
+            get { return "trade_stocks"; }
+        }
+
+        public string Type
+        {
+            get { return "direct"; }
+        }
     }
 }
