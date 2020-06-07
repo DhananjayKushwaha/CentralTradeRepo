@@ -42,7 +42,7 @@
             // 
             this.statusBar.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.statusBar.Location = new System.Drawing.Point(0, 533);
-            this.statusBar.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            this.statusBar.Margin = new System.Windows.Forms.Padding(7);
             this.statusBar.Name = "statusBar";
             this.statusBar.Size = new System.Drawing.Size(1234, 51);
             this.statusBar.TabIndex = 0;
@@ -53,8 +53,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dataGridView.Location = new System.Drawing.Point(259, 0);
-            this.dataGridView.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            this.dataGridView.Margin = new System.Windows.Forms.Padding(7);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowHeadersWidth = 92;
             this.dataGridView.Size = new System.Drawing.Size(975, 533);
@@ -69,7 +70,7 @@
             this.controlPanel.Controls.Add(this.btnCancelAsync);
             this.controlPanel.Controls.Add(this.btmLoadAsync);
             this.controlPanel.Location = new System.Drawing.Point(0, 0);
-            this.controlPanel.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            this.controlPanel.Margin = new System.Windows.Forms.Padding(7);
             this.controlPanel.Name = "controlPanel";
             this.controlPanel.Size = new System.Drawing.Size(245, 533);
             this.controlPanel.TabIndex = 2;
@@ -89,7 +90,7 @@
             // btnCancelAsync
             // 
             this.btnCancelAsync.Location = new System.Drawing.Point(21, 80);
-            this.btnCancelAsync.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            this.btnCancelAsync.Margin = new System.Windows.Forms.Padding(7);
             this.btnCancelAsync.Name = "btnCancelAsync";
             this.btnCancelAsync.Size = new System.Drawing.Size(205, 51);
             this.btnCancelAsync.TabIndex = 1;
@@ -100,7 +101,7 @@
             // btmLoadAsync
             // 
             this.btmLoadAsync.Location = new System.Drawing.Point(21, 16);
-            this.btmLoadAsync.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            this.btmLoadAsync.Margin = new System.Windows.Forms.Padding(7);
             this.btmLoadAsync.Name = "btmLoadAsync";
             this.btmLoadAsync.Size = new System.Drawing.Size(205, 51);
             this.btmLoadAsync.TabIndex = 0;
@@ -116,10 +117,10 @@
             this.Controls.Add(this.controlPanel);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.statusBar);
-            this.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            this.Margin = new System.Windows.Forms.Padding(7);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Using BackgroundWorker";
+            this.Text = "Async Data Load Demo";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();

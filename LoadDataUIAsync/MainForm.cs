@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using System.Threading.Tasks;
+using System.IO;
+using System.Collections.Concurrent;
 
 namespace LoadDataUIAsync
 {
@@ -140,14 +143,34 @@ namespace LoadDataUIAsync
         //Method to produce dummy data to simulate async large data load. This can be relaced according to business requirement like loading data from file
         DataTable ProduceData()
         {
-            DataTable table = CreateDataTable();
-            for (int i = 0; i < 500; i++)
-            {
-                DataRow row = table.Rows.Add();
-                row["Name"] = Guid.NewGuid().ToString();
-            }
+            ConcurrentBag<DataTable> logTables = new ConcurrentBag<DataTable>();
 
-            return table;
+            string logDir = Path.Combine(Environment.CurrentDirectory, @"Logs");
+            var logFiles = Directory.GetFiles(logDir);
+
+            Parallel.ForEach(logFiles, (file) => {
+                //read file here  & build table
+                
+                //fill the data in data table using guid for demo
+                DataTable table = CreateDataTable();
+                for (int i = 0; i < 500; i++)
+                {
+                    DataRow row = table.Rows.Add();
+                    row["Name"] = Guid.NewGuid().ToString();
+                }
+
+                logTables.Add(table);
+            });
+
+            DataTable allLogs = CreateDataTable();
+
+            foreach (var logTable in logTables)
+            {
+                allLogs.Merge(logTable);
+                allLogs.AcceptChanges();
+            }
+            
+            return allLogs;
         }
 
         //Method to create dummy table to hold data
@@ -155,7 +178,6 @@ namespace LoadDataUIAsync
         {
             DataColumn clmID = new DataColumn( "ID", typeof(long));
             clmID.AutoIncrement = true;
-            clmID.Unique = true;
             DataColumn clmName = new DataColumn("Name", typeof(string));
             DataTable table = new DataTable();
             table.Columns.Add(clmID);
