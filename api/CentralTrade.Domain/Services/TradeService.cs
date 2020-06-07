@@ -14,15 +14,15 @@ namespace CentralTrade.Domain.Services
     /// </summary>
     public class TradeService : ITradeService
     {
-        private readonly ITradeViewRepository _tradeViewRepository;
-        public TradeService(ITradeViewRepository tradeViewRepository)
+        private readonly ITradeViewCacheRepository _tradeViewCacheRepository;
+        public TradeService(ITradeViewCacheRepository tradeViewCacheRepository)
         {
-            _tradeViewRepository = tradeViewRepository;
+            _tradeViewCacheRepository = tradeViewCacheRepository;
         }
 
         public async Task<List<StockView>> Get(int topN)
         {
-            return await _tradeViewRepository.GetTrendingStocks(topN, default);
+            return await _tradeViewCacheRepository.GetTrendingStocks(topN, default);
         }
 
         public async Task<List<StockView>> GetMyWatchStocks()
@@ -34,7 +34,7 @@ namespace CentralTrade.Domain.Services
             //added to simulate delay in response
             Thread.Sleep(1000);
 
-            return await Task.FromResult(new List<StockView>());
+            return await Task.FromResult(new List<StockView>() { new StockView() { Code = "Dell", CurrencySymbol = "$", DeltaPrice = 10.2, Id = Guid.NewGuid(), UnitPrice = 2000.5 } });
         }
     }
 }

@@ -98,7 +98,7 @@ namespace CentralTrade.Repositories
             return null;
         }
 
-        public static IAsyncPolicy GetPolicy(ILogger logger)
+        private static IAsyncPolicy GetPolicy(ILogger logger)
         {
             if (circuitBreakerPolicy == null)
             {

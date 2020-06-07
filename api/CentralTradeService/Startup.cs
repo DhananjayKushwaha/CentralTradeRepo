@@ -39,12 +39,15 @@ namespace CentralTrade.API
             builder.RegisterType<TradeTxService>().As<ITradeTxService>();
             builder.RegisterType<TradeService>().As<ITradeService>();
             builder.RegisterType<TradeViewRepository>().As<ITradeViewRepository>();
+            builder.RegisterType<TradeViewRepository>().As<ITradeViewRepository>();
+            builder.RegisterType<TradeViewCacheRepository>().As<ITradeViewCacheRepository>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
+            services.AddMemoryCache();
             services.AddMvcCore().AddApiExplorer().AddControllersAsServices();
             services.Configure<GzipCompressionProviderOptions>(opts => opts.Level = System.IO.Compression.CompressionLevel.Optimal);
             services.Configure<BrotliCompressionProviderOptions>(opts => opts.Level = System.IO.Compression.CompressionLevel.Optimal);
